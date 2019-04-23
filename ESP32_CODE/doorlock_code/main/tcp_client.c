@@ -18,7 +18,8 @@
     Key things to remember:
 		- Ensure that you know the details of the access point
 		  and change the wifi and IP variables in 
-			#define CONFIG_EXAMPLE_IPV4(If IPV6 set this accordingly)
+			#define CONFIG_EXAMPLE_IPV4(If IPV6 set this accordingl)
+
 			#define EXAMPLE_WIFI_SSID "Kcuram_EXT"
 			#define EXAMPLE_WIFI_PASS "CuramFamily12"
 			#define HOST_IP_ADDR "10.0.0.231" (host = Server)
@@ -58,15 +59,15 @@ extern void unlocked();
 */
 
 #define CONFIG_EXAMPLE_IPV4
+/*
 #define EXAMPLE_WIFI_SSID "Kcuram_EXT"
 #define EXAMPLE_WIFI_PASS "CuramFamily12"
 #define HOST_IP_ADDR "10.0.0.231" 
-
-/* Implement changes to allow Android phone to work. Connect both ESP and TCP Server to same network. Adjust IP addresses as needed.
-#define EXAMPLE_WIFI_SSID ""
-#define EXAMPLE_WIFI_PASS ""
-#define HOST_IP_ADDR "" 
 */
+
+#define EXAMPLE_WIFI_SSID "OnePlus 6"
+#define EXAMPLE_WIFI_PASS "CuramFamily"
+#define HOST_IP_ADDR "192.168.43.133" 
 
 #define PORT 10034
 
@@ -86,8 +87,9 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
         ESP_LOGI(TAG, "SYSTEM_EVENT_STA_START");
         break;
     case SYSTEM_EVENT_STA_CONNECTED:
-        /* enable ipv6 */
-        tcpip_adapter_create_ip6_linklocal(TCPIP_ADAPTER_IF_STA);
+//        /* enable ipv6 */
+        printf("SYSTEM_EVENT_STA_CONNECTED\r\n");
+//        tcpip_adapter_create_ip6_linklocal(TCPIP_ADAPTER_IF_STA);
         break;
     case SYSTEM_EVENT_STA_GOT_IP:
         xEventGroupSetBits(wifi_event_group, IPV4_GOTIP_BIT);
@@ -98,14 +100,14 @@ static esp_err_t event_handler(void *ctx, system_event_t *event)
         /* This is a workaround as ESP32 WiFi libs don't currently auto-reassociate. */
         esp_wifi_connect();
         xEventGroupClearBits(wifi_event_group, IPV4_GOTIP_BIT);
-        xEventGroupClearBits(wifi_event_group, IPV6_GOTIP_BIT);
+//        xEventGroupClearBits(wifi_event_group, IPV6_GOTIP_BIT);
         break;
     case SYSTEM_EVENT_AP_STA_GOT_IP6:
-        xEventGroupSetBits(wifi_event_group, IPV6_GOTIP_BIT);
-        ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP6");
-
-        char *ip6 = ip6addr_ntoa(&event->event_info.got_ip6.ip6_info.ip);
-        ESP_LOGI(TAG, "IPv6: %s", ip6);
+        printf("System event AP got IP6\r\n");
+//        xEventGroupSetBits(wifi_event_group, IPV6_GOTIP_BIT);
+//        ESP_LOGI(TAG, "SYSTEM_EVENT_STA_GOT_IP6");
+//        char *ip6 = ip6addr_ntoa(&event->event_info.got_ip6.ip6_info.ip);
+//        ESP_LOGI(TAG, "IPv6: %s", ip6);
     default:
         break;
     }
@@ -140,7 +142,7 @@ static void initialise_wifi(void)
 
 static void wait_for_ip()
 {
-    uint32_t bits = IPV4_GOTIP_BIT | IPV6_GOTIP_BIT ;
+    uint32_t bits = IPV4_GOTIP_BIT | IPV6_GOTIP_BIT ;//possibly get rid of IPV6 bits.
 
     ESP_LOGI(TAG, "Waiting for AP connection...");
 //    xEventGroupWaitBits(wifi_event_group, bits, false, true, portMAX_DELAY);
@@ -166,6 +168,8 @@ printf("%sRunning tcp client task \n", TAG);
         addr_family = AF_INET;
         ip_protocol = IPPROTO_IP;
         inet_ntoa_r(destAddr.sin_addr, addr_str, sizeof(addr_str) - 1);
+#endif
+/*    //Attempt to disable IPv6 functionality. Force IPv4?
 #else // IPV6
         struct sockaddr_in6 destAddr;
         inet6_aton(HOST_IP_ADDR, &destAddr.sin6_addr);
@@ -175,7 +179,7 @@ printf("%sRunning tcp client task \n", TAG);
         ip_protocol = IPPROTO_IPV6;
         inet6_ntoa_r(destAddr.sin6_addr, addr_str, sizeof(addr_str) - 1);
 #endif
-
+*/
         int sock =  socket(addr_family, SOCK_STREAM, ip_protocol);
         if (sock < 0) {
             ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
