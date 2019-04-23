@@ -1,9 +1,12 @@
 # SPRING-2019-SENIOR-PROJECT
+
 <-------------------->
+
 TODO:
 Go through python program. Comment out all code besides the import functions to determine packages to install on new system.
 
 <-------------------->
+
 2 programs:
 //First, run Build Face Model program.
 - Build Face Model - Builds face model. 
@@ -14,6 +17,7 @@ Go through python program. Comment out all code besides the import functions to 
 	- Photo of face needs to be roughly 100x100 pixels.
 
 <---------------------->
+
 //This program should run after the Face Model program is run.
 - Cheese <-- Application for taking photos.
 - C2.py <-- Main program that launches our Camera and TCP Server programs. (2 seperate threads)
@@ -26,10 +30,10 @@ Go through python program. Comment out all code besides the import functions to 
        - Either way, the inotify command will wait for the image with the latest timestamp in order to run image detection based on prexisting models from the first script that is run (Build Face Model).	   
 	   
 <---------------------->
+
 - ESP32 Side of things:
     - 2 programs: hello_world.c [rename to TCP Client.c] / servo.c
 	- Start Camera/Server first. Provide the address of the computer with the Camera connected to the ESP32 code. This is our 'HOST IP ADDRESS'. 
     - Messages: LOCK and UNLK are sent from TCP Server (Jetson) to TCP Client.
 
 Thank you for checking out this repository :]	
-	
