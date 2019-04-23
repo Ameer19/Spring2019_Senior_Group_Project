@@ -1,3 +1,4 @@
+// Created by Ajay Curam
 /*  Lock program
  	
     This program simulates the LOCK that is driven by pwm attached to the
@@ -21,7 +22,7 @@
 			#define CONFIG_EXAMPLE_IPV4(If IPV6 set this accordingl)
 
 			#define EXAMPLE_WIFI_SSID "Kcuram_EXT"
-			#define EXAMPLE_WIFI_PASS "CuramFamily12"
+			#define EXAMPLE_WIFI_PASS "<REDACTED>"
 			#define HOST_IP_ADDR "10.0.0.231" (host = Server)
 
 */
@@ -61,7 +62,7 @@ extern void unlocked();
 #define CONFIG_EXAMPLE_IPV4
 /*
 #define EXAMPLE_WIFI_SSID "Kcuram_EXT"
-#define EXAMPLE_WIFI_PASS "CuramFamily12"
+#define EXAMPLE_WIFI_PASS "<REDACTED>"
 #define HOST_IP_ADDR "10.0.0.231" 
 */
 
