@@ -32,7 +32,7 @@ classifier_xml_file  = './lbpcascade_frontalface.xml'
 
 # Network server Configuration variables
 # You should change these according to what your network provides as your IP address !!!
-server_address = ('10.0.0.231', 10034)
+server_address = ('192.168.43.133', 10034)
 #server_address = ('172.20.10.3', 10034)
 
 # Camera prediction threshold value between 0 and 100.
@@ -54,8 +54,8 @@ def unlock_door():
 
 #function to detect face using OpenCV
 def detect_face(gray_img):
-	face_cascade = cv2.CascadeClassifier(classifier_xml_file) #Understand
-	faces = face_cascade.detectMultiScale(gray_img, scaleFactor=1.2, minNeighbors=5, minSize=(10,10))#me!
+	face_cascade = cv2.CascadeClassifier(classifier_xml_file) #Uses pre-built classifier xml file with algorithm parameters stored. This was taken from the OpenCV library repo.
+	faces = face_cascade.detectMultiScale(gray_img, scaleFactor=1.2, minNeighbors=5, minSize=(10,10))
 	if (len(faces) == 0):
 		return None, None
 
@@ -114,8 +114,11 @@ def track_camera_click(): #Thread - Image Tracking in Camera Directory.
 	global program_exit	
 	print program_name, 'Photo Capture Track'
 
-	inotify_cmd = 'inotifywait -q -q -t 1 -e close ' + test_dir + '/' #inode notification. given there is an inode change, notify program. Need to wait until the image is done being created. Do not start camera tracking until the image inputted has COMPLETED write and is closed. [Understand me & params]
-
+	inotify_cmd = 'inotifywait -q -q -t 1 -e close ' + test_dir + '/' #inode notification. given there is an inode change, notify program. Need to wait until the image is done being created. Do not start camera tracking until the image inputted has COMPLETED write and is closed. 
+	# -q -q denotes the that the program will output nothing unless there are fatal errors that arise.
+	# -t 1 denotes that the command can be exited after 1 second if the apropriate event has not occured (file creation in this case in the specified test_dir)
+	# -e close denotes that we are waiting for the event: close. This means that a file within a watched directory has been closed (completed being written to) regardless of how it was opened. 
+	# This line of code basically waits for a file to be generated in our test_dir before proceeding with the rest of the program. We want to be tracking images as they appear in our test_dir folder.
 	program_exit = 0
 	while program_exit == 0:
 		ret_val = os.system(inotify_cmd) #starts another thread and uses cmd in order to perform the call above.
@@ -166,8 +169,8 @@ print test_dir
 
 #create our LBPH face recognizer  and load our model
 
-face_recognizer = cv2.createLBPHFaceRecognizer()
-face_recognizer.load(face_model_file)
+face_recognizer = cv2.createLBPHFaceRecognizer()#Creates LBPH Face Recognizer.
+face_recognizer.load(face_model_file)#load in our created face_model_file that is created after running BuildFaceModel.py .
 
 #Start the server
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -183,6 +186,7 @@ print program_name, 'TCP Server: Out of Waiting for Lock connection', lock_conn,
 print program_name, 'Now  lock and Camera Server are connected !!!'
 
 #Launch seperate threads for run_camera_app (runs cheese) and track_camera_click (latest image)
+#Allows us to run these `functions` simultaneously.
 t1 = threading.Thread(target=run_camera_app)
 t2 = threading.Thread(target=track_camera_click)
 

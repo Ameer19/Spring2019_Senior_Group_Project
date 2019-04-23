@@ -23,7 +23,7 @@
 #       use a dark black curtain when photos are taken
 #     - We find you need a minimum 20 to 30 good photos for this to work well
 #
-# The out model is creted as a 'face_model'oadable file for future usage.
+# The out model is creted as a 'face_model' loadable file for future usage.
 
 import sys
 import cv2
@@ -45,7 +45,11 @@ def draw_rectangle(img, rect): #draws rectangle on detected face bounds.
 
 def detect_face(gray_img):
 	face_cascade = cv2.CascadeClassifier(classifier_xml_file) #sets up Cascade Classifier in OpenCV.
-	faces = face_cascade.detectMultiScale(gray_img, scaleFactor=1.2, minNeighbors=5, minSize=(10,10)) #understand this code & params.
+	faces = face_cascade.detectMultiScale(gray_img, scaleFactor=1.2, minNeighbors=5, minSize=(10,10)) 
+	#First param passes in a gray image version of the image taken as input. 
+	#scaleFactor is the scalar used to resize the image taken by 20% (0.2) smaller than what was taken (Helps algorithm match larger faces to smaller faces in model if needed). 
+	#minNeighbors=5 scales the classifier to omit any erroneous faces detected in an image (higher value = more chance that bounds found includes an actual face.Lower values found `faces` in random parts of input.) 
+	#minSize refers to the smallest image that is allowed to be detected as a face. Denotes 10x10 pixel image for the reduced size of the face. This is set to a low number to accomodate for the low pixel density of the camera in our system. However, we still omit faces in our classifier if they are under 100x100 pixels. 
 	if (len(faces) == 0): #Given there are no faces found, return None.
 		return None, None
 
@@ -153,7 +157,7 @@ print program_name, "Total faces: ", len(faces), "Good ones =", good, "bad ones 
 print program_name, "Subjects: ", subjects
 
 #create our LBPH face recognizer 
-face_recognizer = cv2.createLBPHFaceRecognizer() #Understand me.
+face_recognizer = cv2.createLBPHFaceRecognizer() #Instantiates our LBPH classifier with some predefined constants in parameter fields. Dont need to touch these for now
 
 face_recognizer.train(faces, np.array(labels)) #Train model based of face images, map to labels
 face_recognizer.save(face_model_file) #Save final model to the face_model_file saved under ./face_model
